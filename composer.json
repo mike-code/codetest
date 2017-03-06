@@ -3,9 +3,7 @@
     "minimum-stability": "dev",
     "require": {
         "nesbot/carbon": "^1.22",
-        "nategood/commando": "^0.2.9",
-        "php-http/guzzle6-adapter": "^1.1",
-        "willdurand/geocoder": "4.*",
-        "symfony/console": "^3.2"
+        "symfony/console": "^3.2",
+        "league/geotools": "^0.7.0"
     }
 }

@@ -5,5 +5,11 @@
         "nesbot/carbon": "^1.22",
         "symfony/console": "^3.2",
         "league/geotools": "^0.7.0"
+    },
+    "autoload": {
+    	"psr-4": {"Heptapod\\": "app/"}
+    },
+    "require-dev": {
+        "symfony/var-dumper": "^3.2"
     }
 }

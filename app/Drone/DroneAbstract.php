@@ -6,7 +6,7 @@ use Carbon\Carbon;
 
 use Heptapod\Model\TimeOffset;
 
-abstract class DroneAbstract
+abstract class DroneAbstract implements IDrone
 {
     /**
      * Drone's name
@@ -66,9 +66,29 @@ abstract class DroneAbstract
         return $this->fuelUnits * $this->milesPerUnit;
     }
 
-    public function setFlightDistance($distance)
+    public function getName()
     {
-        $this->distance = $distance;
+        return $this->name;
+    }
+
+    public function getFlightDistanceRaw()
+    {
+        return $this->distance;
+    }
+
+    public function getFlightDurationRaw()
+    {
+        return $this->flightTime;
+    }
+
+    public function getDepartureTimeRaw()
+    {
+        return $this->departureTime;
+    }
+
+    public function getDestinationTimeRaw()
+    {
+        return $this->destinationTime;
     }
 
     public function getFlightDuration()
@@ -81,20 +101,35 @@ abstract class DroneAbstract
         return round($this->distance, 2) . " miles";
     }
 
+    public function getDepartureOffset()
+    {
+        return $this->departureOffset;
+    }
+
+    public function getDestinationOffset()
+    {
+        return $this->destinationOffset;
+    }
+
     public function getDepartureTime()
     {
-        return $this->getTime($this->departureTime, $this->departureOffset);        
+        return $this->getFormattedTime($this->departureTime, $this->departureOffset);        
     }
 
     public function getDestinationTime()
     {
-        return $this->getTime($this->destinationTime, $this->destinationOffset);
+        return $this->getFormattedTime($this->destinationTime, $this->destinationOffset);
     }
 
     public function setTimeOffsets(TimeOffset $departureOffset, TimeOffset $destinationOffset)
     {
         $this->departureOffset = $departureOffset;
         $this->destinationOffset = $destinationOffset;
+    }
+
+    public function setFlightDistance($distance)
+    {
+        $this->distance = $distance;
     }
 
     public function calculateFlightTime()
@@ -110,7 +145,7 @@ abstract class DroneAbstract
         return $this->name;
     }
 
-    private function getTime($timestamp, TimeOffset $offset)
+    private function getFormattedTime($timestamp, TimeOffset $offset)
     {
         $time = Carbon::createFromTimestamp($timestamp)
             ->addSeconds($offset->getSecondsOffset())

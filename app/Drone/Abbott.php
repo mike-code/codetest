@@ -6,9 +6,9 @@ class Abbott extends DroneAbstract
 {
     public $name = 'Abbott';
 
-    protected $speed = 100;
+    protected $speed = 30;
 
-    protected $milesPerUnit = 100;
+    protected $milesPerUnit = 10;
 
-    protected $fuelUnits  = 50.0;
+    protected $fuelUnits  = 150.0;
 }

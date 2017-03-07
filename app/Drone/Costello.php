@@ -2,13 +2,13 @@
 
 namespace Heptapod\Drone;
 
-class Costello extends DroneAbstract
+class Costello extends DroneAbstract 
 {
     public $name = 'Costello';
 
-    protected $speed = 500;
+    protected $speed = 70;
 
-    protected $milesPerUnit = 150;
+    protected $milesPerUnit = 30;
 
     protected $fuelUnits  = 5.0;
 }

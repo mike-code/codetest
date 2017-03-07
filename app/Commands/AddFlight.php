@@ -5,6 +5,7 @@ namespace Heptapod\Commands;
 use Heptapod\Drone\DroneAbstract;
 use Heptapod\Drone\Abbott;
 use Heptapod\Drone\Costello;
+use Heptapod\Database\DbLite;
 use Heptapod\Verify\Verifier;
 
 use League\Geotools\Geotools;
@@ -19,30 +20,63 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class AddFlight extends Command
 {
+    private $geotools;
+
     private $departureCoords;
     private $departureOffset;
     private $destinationCoords;
     private $destinationOffset;
     private $availableDrones;
+    private $writer;
+    private $input;
+    private $output;
+    private $database;
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->printHeader();        
+
         $distance    = $this->getFlightDistance();
         $drones      = $this->getSuitableDrones($distance);
-        $droneName   = $this->promptDroneSelection($drones, $input, $output);
+
+        do
+        {
+            $drone = $this->handleDroneSelection($drones, $distance);
+        }
+        while(!$this->writer->confirm('Do you want to launch selected drone? (^C to terminate)?', true));
+
+        $this->database->storeFlight($drone, $this->departureCoords, $this->destinationCoords);
+
+        $this->writer->success("{$drone->name} was launched into airspace!");
+    }
+
+    private function handleDroneSelection($drones, $distance)
+    {
+        $droneName = $this->promptDroneSelection($drones);
 
         $chosenDrone = $drones[$droneName];
         $chosenDrone->setFlightDistance($distance);
         $chosenDrone->calculateFlightTime();
         $chosenDrone->setTimeOffsets($this->departureOffset, $this->destinationOffset);
 
-        $this->printFlightSummary($chosenDrone, $output);
+        $this->printFlightSummary($chosenDrone);
+
+        return $chosenDrone;
     }
 
-
-    private function printFlightSummary(DroneAbstract $drone, OutputInterface $output)
+    private function printHeader()
     {
-        $table = new Table($output);
+        $this->writer->title("{$this->getApplication()->getName()} v{$this->getApplication()->getVersion()}");
+
+        $this->writer->text("Departure:   " . $this->geotools->convert($this->departureCoords)->toDMS() . " for " . $this->departureOffset);
+        $this->writer->text("Destination: " . $this->geotools->convert($this->destinationCoords)->toDMS() . " for " . $this->destinationOffset);
+    }
+
+    private function printFlightSummary(DroneAbstract $drone)
+    {
+        $this->writer->newline(1);
+
+        $table = new Table($this->output);
         $table
             ->setHeaders(array('Chosen Drone', 'Departure Time', 'Arrival Time', 'Flight Duration', 'Flight Distance'))
             ->setRows(
@@ -56,10 +90,12 @@ class AddFlight extends Command
                 ]
             ]);
         $table->render();
+
+        $this->writer->newline(1);
     }
 
 
-    private function promptDroneSelection($drones, InputInterface $input, OutputInterface $output)
+    private function promptDroneSelection($drones)
     {
         $helper = $this->getHelper('question');
         $question = new ChoiceQuestion(
@@ -68,24 +104,27 @@ class AddFlight extends Command
         );
         $question->setErrorMessage('Drone %s is unavailable.');
 
-        return $helper->ask($input, $output, $question);
+        return $helper->ask($this->input, $this->output, $question);
     }
 
 
     private function getSuitableDrones($distance)
     {
-        $drones = array_filter($this->availableDrones, function($value) use ($distance)
+        $this->writer->text("Distance:    " . round($distance, 2) . " miles");
+
+        $drones = array_filter($this->availableDrones, function($drone) use ($distance)
         {
-            return $distance <= $value->getMaximumFlightDistance();
+            return $distance <= $drone->getMaximumFlightDistance();
         });
 
         if(empty($drones))
         {
-            $io = new SymfonyStyle($input, $output);
-            $io->error('No available drones for given distance. Terminating.');
+            $this->writer->error('No available drones for given distance. Terminating.');
 
             exit;
         }
+
+        $this->writer->newline(1);
 
         return $drones;
     }   
@@ -93,9 +132,7 @@ class AddFlight extends Command
 
     private function getFlightDistance()
     {
-        $geotools = new Geotools();
-
-        $dist = $geotools->distance()->setFrom($this->departureCoords)->setTo($this->destinationCoords);
+        $dist = $this->geotools->distance()->setFrom($this->departureCoords)->setTo($this->destinationCoords);
 
         return $dist->in('mi')->vincenty();
     }
@@ -122,6 +159,13 @@ class AddFlight extends Command
 
     protected $destinationTimezoneName = "destination-timezone";
     protected $destinationTimezoneDesc = "Destination location timezone as UTC time offset (eg. +03:00 or -04:30)";
+
+    function __construct()
+    {
+        parent::__construct();
+
+        $this->geotools = new Geotools();
+    }
 
     protected function configure()
     {
@@ -177,7 +221,13 @@ class AddFlight extends Command
         $this->departureOffset   = Verifier::getTimeOffset($departOffset);
         $this->destinationOffset = Verifier::getTimeOffset($destOffset);
 
+        $this->writer = new SymfonyStyle($input, $output);
+        $this->input  = $input;
+        $this->output = $output;
+
         $this->initDrones();
+
+        $this->database = new DbLite();
     }
 
 

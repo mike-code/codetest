@@ -4,7 +4,7 @@
 
 System dependencies
 ```
-apt-get install git php7.0 php7.0-cli
+apt-get install git php7.0 php7.0-cli composer
 ```
 
 Ebin

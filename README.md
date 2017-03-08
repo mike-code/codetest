@@ -18,7 +18,8 @@ composer install
 Run
 ```
 php drones flight:add -- 52.229676 21.012229 UTC+2 51.507351 -0.127758 UTC+4
-php drones flight:add -- 51.8860 0.2388 +0 52.2105 -0.9929 +7
+php drones flight:add -- 51.8860 0.2388 +0 52.2105 -0.9929 UTC+7
+php drones flight:list
 ```
 
 ## Known issues

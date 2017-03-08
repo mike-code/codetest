@@ -8,4 +8,5 @@ use Symfony\Component\Console\Application;
 
 $application = new Application('Heptapod Laundrone Flight System', '0.8');
 $application->add(new Commands\AddFlight());
+$application->add(new Commands\ListFlights());
 $application->run();

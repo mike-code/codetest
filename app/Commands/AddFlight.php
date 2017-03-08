@@ -140,25 +140,25 @@ class AddFlight extends Command
     /* ------------------------------------------------------------------------------------------ */
 
     protected $commandName = 'flight:add';
-    protected $commandDescription = "Adds a drone flight";
+    protected $commandDescription = 'Adds a drone flight';
 
-    protected $departureLatitudeName = "departure-latitude";
-    protected $departureLatitudeDesc = "Departure location latitude (eg. 51.8860)";
+    protected $departureLatitudeName = 'departure-latitude';
+    protected $departureLatitudeDesc = 'Departure location latitude (eg. 51.8860)';
 
-    protected $departureLongitudeName = "departure-longitude";
-    protected $departureLongitudeDesc = "Departure location longitude (eg. 0.2388)";
+    protected $departureLongitudeName = 'departure-longitude';
+    protected $departureLongitudeDesc = 'Departure location longitude (eg. 0.2388)';
 
-    protected $departureTimezoneName = "departure-timezone";
-    protected $departureTimezoneDesc = "Departure location timezone as UTC time offset (eg. +03:00 or -04:30)";
+    protected $departureTimezoneName = 'departure-timezone';
+    protected $departureTimezoneDesc = 'Departure location timezone as UTC time offset (eg. +03:00 or -04:30)';
 
-    protected $destinationLatitudeName = "destination-latitude";
-    protected $destinationLatitudeDesc = "Destination location latitude (eg. 51.8860)";
+    protected $destinationLatitudeName = 'destination-latitude';
+    protected $destinationLatitudeDesc = 'Destination location latitude (eg. 51.8860)';
 
-    protected $destinationLongitudeName = "destination-longitude";
-    protected $destinationLongitudeDesc = "Destination location longitude (eg. 0.2388)";
+    protected $destinationLongitudeName = 'destination-longitude';
+    protected $destinationLongitudeDesc = 'Destination location longitude (eg. 0.2388)';
 
-    protected $destinationTimezoneName = "destination-timezone";
-    protected $destinationTimezoneDesc = "Destination location timezone as UTC time offset (eg. +03:00 or -04:30)";
+    protected $destinationTimezoneName = 'destination-timezone';
+    protected $destinationTimezoneDesc = 'Destination location timezone as UTC time offset (eg. +03:00 or -04:30)';
 
     function __construct()
     {
@@ -208,11 +208,11 @@ class AddFlight extends Command
 
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
-        $departLat  = $input->getArgument($this->departureLatitudeName);
-        $departLon  = $input->getArgument($this->departureLongitudeName);
+        $departLat    = $input->getArgument($this->departureLatitudeName);
+        $departLon    = $input->getArgument($this->departureLongitudeName);
         $departOffset = $input->getArgument($this->departureTimezoneName);
-        $destLat    = $input->getArgument($this->destinationLatitudeName);
-        $destLon    = $input->getArgument($this->destinationLongitudeName);
+        $destLat      = $input->getArgument($this->destinationLatitudeName);
+        $destLon      = $input->getArgument($this->destinationLongitudeName);
         $destOffset   = $input->getArgument($this->destinationTimezoneName);
 
         $this->departureCoords   = Verifier::getCoordinates($departLat, $departLon);

@@ -66,6 +66,16 @@ abstract class DroneAbstract implements IDrone
         return $this->fuelUnits * $this->milesPerUnit;
     }
 
+    public function getFuelUnits()
+    {
+        return $this->fuelUnits;
+    }
+
+    public function getMilesPerUnit()
+    {
+        return $this->milesPerUnit;
+    }
+
     public function getName()
     {
         return $this->name;

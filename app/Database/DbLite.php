@@ -16,6 +16,7 @@ class DbLite
     function __construct()
     {
         $this->db = new \PDO('sqlite:' . $this->filePath);
+        $this->db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         $this->create_table();
     }
 
@@ -33,11 +34,10 @@ class DbLite
                     duration INTEGER NOT NULL,
                     distance VARCHAR(255) NOT NULL,
                     start_location VARCHAR(255) NOT NULL,
-                    stop_locaion VARCHAR(255) NOT NULL,
+                    stop_location VARCHAR(255) NOT NULL,
                     start_timezone VARCHAR(255) NOT NULL,
                     stop_timezone VARCHAR(255) NOT NULL
-                );
-                CREATE UNIQUE INDEX flights_id_uindex ON {$this->tableName} (id);"
+                );"
             );
         }
         catch( Exception $e)
@@ -58,7 +58,7 @@ class DbLite
                     duration,
                     distance,
                     start_location,
-                    stop_locaion,
+                    stop_location,
                     start_timezone,
                     stop_timezone
                 ) VALUES (
@@ -95,7 +95,14 @@ class DbLite
         $query->bindParam(':stopZone',       $destinationOffset, \PDO::PARAM_STR);
 
         $query->execute();
+    }
 
+    function getFlights()
+    {
+        $query = $this->db->prepare("SELECT * FROM {$this->tableName}");
+        $query->execute();
+
+        return $query->fetchAll();
     }
 }
 

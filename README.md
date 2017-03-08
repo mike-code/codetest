@@ -26,3 +26,6 @@ php drones flight:add -- 51.8860 0.2388 +0 52.2105 -0.9929 +7
 * Missing PHP docs
 * Not robust in all places (mostly in the DB)
 * Windows CLI requires end-of-argument syntax as it interpretes negative floats as parameter names
+* No unit test
+* No deployment script
+* No CI skills demonstration

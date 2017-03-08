@@ -4,7 +4,7 @@
 
 System dependencies
 ```
-sudo apt-get install git php7.0 php7.0-cli php7.0-pdo composer
+sudo apt-get install git php7.0 php7.0-cli php7.0-pdo php7.0-sqlite composer
 ```
 
 Get
